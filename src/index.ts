@@ -90,7 +90,15 @@ async function runHTTP(): Promise<void> {
       }
     }
   });
-
+   const methodNotAllowed = (_req: express.Request, res: express.Response) => {
+     res.status(405).set("Allow", "POST").json({
+       jsonrpc: "2.0",
+       error: { code: -32000, message: "Method not allowed." },
+       id: null
+     });
+   };
+   app.get("/mcp", methodNotAllowed);
+   app.delete("/mcp", methodNotAllowed);
   const port = parseInt(process.env.PORT || "3000", 10);
   app.listen(port, () => {
     console.error(`Telegram MCP server listening on http://0.0.0.0:${port}/mcp`);
